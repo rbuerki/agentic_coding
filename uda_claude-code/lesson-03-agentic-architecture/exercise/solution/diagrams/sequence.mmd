@@ -1,0 +1,62 @@
+sequenceDiagram
+    actor Customer
+    participant System as Ticket System
+    participant Triage as Triage Agent
+    participant CRM
+    participant Tech as Technical Agent
+    participant Bill as Billing Agent
+    participant KB as Knowledge Base Agent
+    participant Route as Routing Agent
+    participant Dest as Destination
+
+    Customer->>System: Submit Support Ticket
+    System->>Triage: New Ticket Event
+    activate Triage
+
+    Triage->>CRM: Lookup Customer
+    CRM-->>Triage: Customer Tier & History
+
+    Note over Triage: Categorize urgency,<br/>type, and set SLA
+
+    par Parallel Analysis
+        Triage->>Tech: Analyze (if technical)
+        activate Tech
+        Tech->>Tech: Check logs, docs
+        Tech-->>Triage: Technical Analysis
+        deactivate Tech
+        and
+        Triage->>Bill: Analyze (if billing)
+        activate Bill
+        Bill->>Bill: Check billing API
+        Bill-->>Triage: Billing Analysis
+        deactivate Bill
+        and
+        Triage->>KB: Search Knowledge Base
+        activate KB
+        KB->>KB: Search past tickets
+        KB-->>Triage: KB Match Results
+        deactivate KB
+    end
+
+    Triage->>Route: All Analysis Results
+    deactivate Triage
+    activate Route
+
+    Note over Route: Evaluate confidence<br/>and routing rules
+
+    alt High Confidence KB Match
+        Route->>Dest: Auto-Response (40%)
+        Dest-->>Customer: Solution from KB
+    else Billing Request (Simple)
+        Route->>Dest: Auto-Process (included in 40%)
+        Dest-->>Customer: Action Completed
+    else Critical/Enterprise
+        Route->>Dest: Route to Senior Team (55%)
+        Note over Dest: Alert team lead
+    else Standard Routing
+        Route->>Dest: Route to Team (55%)
+    end
+
+    deactivate Route
+
+    Note over Customer,Dest: SLA monitored by<br/>Escalation Agent

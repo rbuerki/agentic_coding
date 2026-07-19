@@ -1,0 +1,19 @@
+%% TODO: Create a sequence diagram showing the interaction timeline between components
+%%
+%% Your diagram should include participants for:
+%% - Customer, Ticket System, Triage Agent, CRM, the 3 specialized agents,
+%%   Routing Agent, and Destination
+%%
+%% The sequence should show:
+%% - The CRM lookup that happens at triage time
+%% - A 'par' block for the 3 specialized agents working simultaneously
+%% - All agents reporting results back to the Routing Agent
+%% - Conditional routing outcomes using 'alt' / 'else' blocks
+%% - A note about the background SLA escalation agent
+%%
+%% Tip: use 'activate' / 'deactivate' to show when each agent is actively working
+%%      see demo/diagrams/sequence.mmd for sequenceDiagram syntax examples
+%% Render with: mmdc -i diagrams/sequence.mmd -o diagrams/sequence.svg
+
+sequenceDiagram
+    %% Define your actors/participants and show the interaction flow

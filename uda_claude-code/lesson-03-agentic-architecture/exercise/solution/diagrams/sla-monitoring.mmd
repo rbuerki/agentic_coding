@@ -1,0 +1,4 @@
+graph TB
+    Agent["<b>ESCALATION AGENT</b><br/>(Runs continuously)<br/><br/><b>Every 5 minutes:</b><br/>1. Query all open tickets<br/>2. Check time remaining vs SLA<br/>3. If < 20% time remaining AND unassigned:<br/>   → Alert team lead<br/>4. If SLA breached:<br/>   → Escalate to manager<br/>   → Log compliance violation<br/><br/><b>Tools:</b> Ticket System, Slack/Email alerts<br/><b>Model:</b> Haiku"]
+
+    style Agent fill:#ffebee,stroke:#d32f2f,stroke-width:2px

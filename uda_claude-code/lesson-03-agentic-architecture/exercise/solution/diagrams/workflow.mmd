@@ -1,0 +1,45 @@
+flowchart TD
+    Start(["<b>START</b><br/>New Ticket Received"])
+    Triage["<b>TRIAGE AGENT</b><br/><br/>1. Parse ticket content<br/>2. Look up customer in CRM<br/>3. Determine: urgency, type, customer tier<br/>4. Set SLA deadline based on tier<br/><br/><b>Output:</b> {urgency: 'high', type: 'technical',<br/>tier: 'enterprise', sla_deadline: '1 hour'}"]
+    TechAgent["<b>Technical Agent</b><br/>(if tech)"]
+    BillingAgent["<b>Billing Agent</b><br/>(if billing)"]
+    KBAgent["<b>Knowledge Base Agent</b><br/>(always)"]
+    Parallel["<b>RUN IN PARALLEL</b>"]
+    TechAnalysis["<b>Technical Analysis</b>"]
+    BillingAnalysis["<b>Billing Analysis</b>"]
+    KBResults["<b>KB Match Results</b>"]
+    Routing["<b>ROUTING AGENT</b><br/><br/><b>Decision Logic:</b><br/>IF kb_match.confidence > 0.9 AND type != 'critical'<br/>→ AUTO-RESPOND with KB solution<br/>ELSE IF type == 'billing' AND simple_request<br/>→ AUTO-PROCESS (refund, upgrade, etc.)<br/>ELSE IF urgency == 'critical' OR tier == 'enterprise'<br/>→ ROUTE to senior support + ALERT team lead<br/>ELSE<br/>→ ROUTE to appropriate team with context"]
+    AutoResponse["<b>AUTO-RESPONSE</b><br/>- KB answer<br/>- Auto-fix<br/>(40%)"]
+    HumanTeam["<b>HUMAN TEAM</b><br/>- Tech team<br/>- Billing<br/>- General<br/>(55%)"]
+    Escalation["<b>ESCALATION</b><br/>- SLA alert<br/>- Manager<br/>- Exec<br/>(5%)"]
+
+    Start --> Triage
+    Triage --> TechAgent
+    Triage --> BillingAgent
+    Triage --> KBAgent
+    TechAgent -.-> Parallel
+    BillingAgent -.-> Parallel
+    KBAgent -.-> Parallel
+    Parallel -.-> TechAnalysis
+    Parallel -.-> BillingAnalysis
+    Parallel -.-> KBResults
+    TechAnalysis --> Routing
+    BillingAnalysis --> Routing
+    KBResults --> Routing
+    Routing --> AutoResponse
+    Routing --> HumanTeam
+    Routing --> Escalation
+
+    style Start fill:#e3f2fd,stroke:#333,stroke-width:2px
+    style Triage fill:#fff4e6,stroke:#333,stroke-width:2px
+    style TechAgent fill:#e8f5e9,stroke:#333,stroke-width:2px
+    style BillingAgent fill:#e8f5e9,stroke:#333,stroke-width:2px
+    style KBAgent fill:#e8f5e9,stroke:#333,stroke-width:2px
+    style Parallel fill:#fce4ec,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    style TechAnalysis fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style BillingAnalysis fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style KBResults fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style Routing fill:#fff4e6,stroke:#333,stroke-width:2px
+    style AutoResponse fill:#c8e6c9,stroke:#333,stroke-width:2px
+    style HumanTeam fill:#c8e6c9,stroke:#333,stroke-width:2px
+    style Escalation fill:#ffcdd2,stroke:#333,stroke-width:2px
