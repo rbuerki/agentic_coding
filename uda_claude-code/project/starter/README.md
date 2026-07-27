@@ -63,7 +63,7 @@ Your tasks:
 ### Prerequisites
 
 - Node.js 18+
-- Anthropic API access (provided in Vocareum workspace) or [your own API key](https://console.anthropic.com/)
+- Anthropic API access (provided in Vocareum workspace), a Claude Code CLI login (`claude login`, covered by a Pro/Max subscription), or [your own API key](https://console.anthropic.com/)
 - [GitHub Personal Access Token](https://github.com/settings/tokens) (recommended - scopes: `repo`, `read:org`)
 
 ### Installation
@@ -117,7 +117,26 @@ PROJECT_ROOT=/voc/work/cd14715-claude-code-classroom/project/starter
 LOG_LEVEL=info
 ```
 
+**Local Setup with a Claude Code Subscription (Recommended for local dev):**
+
+This project uses the Claude Agent SDK, which reuses your Claude Code CLI login (`claude login`) instead of a billed API key — covered by a Pro/Max subscription. Leave `ANTHROPIC_API_KEY` unset:
+```bash
+# Model Configuration (REQUIRED)
+ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
+
+# Project root (REQUIRED - update to your path)
+PROJECT_ROOT=/absolute/path/to/project/starter
+
+# GitHub Token (RECOMMENDED)
+# GITHUB_TOKEN=ghp_your-token-here
+
+# Logging level (optional)
+LOG_LEVEL=info
+```
+
 **Local Setup with Your Own API Key:**
+
+Only needed if you want to bill against a specific key/API credits instead of your subscription:
 ```bash
 # Your Anthropic API key
 ANTHROPIC_API_KEY=sk-ant-your-key-here

@@ -29,7 +29,12 @@ npm install --workspace lesson-00-warm-up/exercise/starter
 
 In Vocareum workspace, `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` are **already configured** in your environment — no setup needed.
 
-For local development, set your API key before running:
+For local development, this exercise uses the Claude Agent SDK, which reuses your Claude Code CLI login (`claude login`) — covered by a Pro/Max subscription, so `ANTHROPIC_API_KEY` doesn't need to be set. Just make sure `ANTHROPIC_MODEL` is available, e.g. via a `.env` file:
+```bash
+echo "ANTHROPIC_MODEL=claude-sonnet-4-5-20250929" > .env
+```
+
+If you'd rather bill against a specific API key/API credits instead, set it explicitly:
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
 ```
