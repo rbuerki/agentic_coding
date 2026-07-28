@@ -1,6 +1,5 @@
 /**
  * Sample Support Tickets
- *
  * Different complexity levels to demonstrate model selection.
  */
 
