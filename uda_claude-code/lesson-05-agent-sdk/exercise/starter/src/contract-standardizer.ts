@@ -30,9 +30,8 @@ export interface StandardizedContract {
 // Output folder for standardized contracts
 export const STANDARDIZED_FOLDER = path.join(__dirname, "standardized");
 
-// -----------------------------------------------------------------------------
+
 // Prompt Function
-// -----------------------------------------------------------------------------
 
 const contractStandardizerPrompt = (inputPath: string, outputPath: string) => `You are a contract standardization expert.
 
@@ -81,9 +80,8 @@ INSTRUCTIONS:
 4. Use the Write tool to save the standardized output
 5. Confirm the file was written successfully`;
 
-// -----------------------------------------------------------------------------
+
 // Exported Function: standardizeContract()
-// -----------------------------------------------------------------------------
 
 export async function standardizeContract(
   inputPath: string,
@@ -91,13 +89,33 @@ export async function standardizeContract(
 ): Promise<StandardizedContract> {
   const outputPath = path.join(STANDARDIZED_FOLDER, outputFilename);
 
-  // TODO: Implement the function
+  try {
+    const result = query({
+      prompt: contractStandardizerPrompt(inputPath, outputPath),
+      options: { model, allowedTools: ["Read", "Write"] },
+    });
+
+    let rawResult = "";
+
+    for await (const message of result) {
+      if (message.type !== "result") continue;
+      if (message.subtype === "success") {
+        rawResult = message.result;
+        break;
+      }
+      throw new Error(`Agent SDK error: ${(message.errors || []).join('\n')}`);
+    }
 
   return {
     inputPath,
     outputPath,
-    raw: '' // TODO: Return raw result
+    raw: rawResult
   };
 
-  // TODO: Catch any errors and re-throw with message: "Failed to standardize contract: {original message}"
+} catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to standardize contract: ${error.message}`);
+    }
+    throw new Error("Failed to standardize contract: Unknown error");
+  }
 }

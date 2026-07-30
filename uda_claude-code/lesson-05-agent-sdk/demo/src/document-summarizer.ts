@@ -14,9 +14,8 @@ if (!model) {
   throw new Error("ANTHROPIC_MODEL is not set");
 }
 
-// -----------------------------------------------------------------------------
+
 // Exported Types
-// -----------------------------------------------------------------------------
 
 export interface DocumentSummary {
   keyPoints: string[];
@@ -24,9 +23,8 @@ export interface DocumentSummary {
   raw: string;
 }
 
-// -----------------------------------------------------------------------------
+
 // Prompt Function
-// -----------------------------------------------------------------------------
 
 const documentSummarizerPrompt = (filePath: string) => `
     You are a document summarization expert.
@@ -51,9 +49,8 @@ const documentSummarizerPrompt = (filePath: string) => `
 
     The document path is: ${filePath}`;
 
-// -----------------------------------------------------------------------------
-// Exported Function: summarizeDocument()
-// -----------------------------------------------------------------------------
+
+    // Exported Function: summarizeDocument()
 
 export async function summarizeDocument(filePath: string): Promise<DocumentSummary> {
   try {

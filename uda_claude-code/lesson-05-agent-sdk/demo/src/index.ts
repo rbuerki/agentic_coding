@@ -1,21 +1,19 @@
 /**
  * Demo: Claude Agent SDK - Document Summarizer
- *
+ * 
  * Tests for the summarizeDocument() function.
  */
 
 import "dotenv/config";
 import { summarizeDocument } from "./document-summarizer.js";
 
-// -----------------------------------------------------------------------------
+
 // Step 1: Test with sample API guide
-// -----------------------------------------------------------------------------
 
 async function summarizeSampleDoc() {
   console.log("\n--- STEP 1: Summarize Sample API Guide ---\n");
 
   const filePath = "./src/sample-api-guide.md";
-
   const result = await summarizeDocument(filePath);
 
   console.log("📊 Result:");
@@ -24,13 +22,11 @@ async function summarizeSampleDoc() {
     console.log(`    ${i + 1}. ${point}`);
   });
   console.log(`\n  Summary: ${result.summary}`);
-
   console.log("\n💡 Agent used Read tool to access the file automatically!");
 }
 
-// -----------------------------------------------------------------------------
+
 // Main
-// -----------------------------------------------------------------------------
 
 async function main() {
   console.log("=".repeat(60));
