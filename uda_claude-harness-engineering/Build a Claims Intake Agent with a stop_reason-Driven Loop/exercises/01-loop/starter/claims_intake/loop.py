@@ -84,38 +84,58 @@ def run(
         total_output += output_tokens
         budget.record_input_tokens(input_tokens)
 
-        # TODO:Build a trace record for this turn and write it.
-        # The record is a dict with these keys:
-        #     turn:           the turn counter
-        #     stop_reason:    response.stop_reason
-        #     tool_calls:     a list of {id, name, input} dicts, one per tool_use block
-        #                     in response.content (skip non-tool_use blocks)
-        #     latency_ms:     round(latency_ms, 1)
-        #     input_tokens:   input_tokens
-        #     output_tokens:  output_tokens
-        # Call `tracer.write(record)`.
+        # Write a record to the tracer for every turn, regardless of stop_reason.
+        record = {
+            "turn": turn,
+            "stop_reason": response.stop_reason,
+            "tool_calls": [
+                {"id": block.id, "name": block.name, "input": block.input}
+                for block in response.content
+                if block.type == "tool_use"
+            ],
+            "latency_ms": round(latency_ms, 1),
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+        }
+        tracer.write(record)
 
-        # TODO:Triage on response.stop_reason. The whole point of the
-        # agentic loop is that THIS is what drives control flow — not the message text,
-        # not a turn count, not the presence of a magic string.
-        #
-        # Case 1: response.stop_reason == "end_turn"
-        #   Append the assistant turn to working_messages:
-        #       {"role": "assistant", "content": response.content}
-        #   Return a FinalState carrying working_messages, the running token totals,
-        #   the turn count, and the final assistant content.
-        #
-        # Case 2: response.stop_reason == "tool_use"
-        #   Append the assistant turn to working_messages (same shape as Case 1).
-        #   For every tool_use block in response.content, call
-        #       tool_executor(block.name, dict(block.input))
-        #   and collect the result into a tool_result block:
-        #       {"type": "tool_result", "tool_use_id": block.id, "content": <result>}
-        #   ALL of these tool_result blocks go into ONE user turn together — not one
-        #   user turn per tool. Append that single user turn to working_messages and
-        #   `continue` the loop.
-        #
-        # Case 3: anything else
-        #   Raise UnexpectedStopReason naming the turn and the offending stop_reason.
-        #   Do NOT silently retry, do NOT guess, do NOT treat max_tokens as success.
-        raise NotImplementedError("Exercise 1: implement the stop_reason triage")
+        # Inspect and triage on response.stop_reason.
+        if response.stop_reason == "end_turn":
+            working_messages.append({"role": "assistant", "content": response.content})
+            return FinalState(
+                messages=working_messages,
+                total_input_tokens=total_input,
+                total_output_tokens=total_output,
+                turn_count=turn,
+                final_content=response.content,
+            )
+
+        if response.stop_reason == "tool_use":
+            # append the full tool_use blocks into a single assistant turn
+            working_messages.append(
+                {
+                    "role": "assistant",
+                    "content": response.content,
+                }
+            )
+            # append ALL collected tool results into a single ingle user turn
+            tool_results = []
+            for block in response.content:
+                if block.type == "tool_use":
+                    result = tool_executor(block.name, dict(block.input))
+                    tool_results.append(
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": block.id,
+                            "content": result,
+                        }
+                    )
+            working_messages.append(
+                {
+                    "role": "user",
+                    "content": tool_results,
+                }
+            )
+            continue
+
+        raise UnexpectedStopReason(f"turn {turn}: unexpected stop_reason={response.stop_reason!r}")

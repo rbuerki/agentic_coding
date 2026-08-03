@@ -2,7 +2,7 @@
 name = "claims_intake"
 version = "0.1.0"
 description = "Insurance Claims Intake Agent — Module 1 solution"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "anthropic==0.39.0",
 ]
